@@ -1,0 +1,111 @@
+#import
+import RPi.GPIO as GPIO
+import time
+
+#setup GPIO
+green=4
+yellow=17
+red=27
+blue=22
+button=18
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(green,GPIO.OUT)
+GPIO.setup(yellow,GPIO.OUT)
+GPIO.setup(red,GPIO.OUT)
+GPIO.setup(blue,GPIO.OUT)
+GPIO.setup(button,GPIO.IN)
+
+def LEDon(pin):
+ GPIO.output(pin,GPIO.HIGH)
+ return
+
+def LEDoff(pin):
+ GPIO.output(pin,GPIO.LOW)
+ return
+
+def blink(pin):
+ LEDon(pin)
+ time.sleep(.5)
+ LEDoff(pin)
+ time.sleep(.5)
+ return
+
+def fastblink(pin):
+ LEDon(pin)
+ time.sleep(.1)
+ LEDoff(pin)
+ time.sleep(.1)
+ return
+
+def cycleall():
+  blink(green)
+  blink(yellow)
+  blink(red)
+  blink(blue)
+  return
+
+def pattern1():
+  LEDon(green)
+  LEDon(red)
+  LEDoff(yellow)
+  LEDoff(blue)
+  
+  time.sleep(.5)
+  
+  LEDoff(green)
+  LEDoff(red)
+  LEDon(yellow)
+  LEDon(blue)
+
+  time.sleep(.5)
+
+  LEDoff(green)
+  LEDoff(yellow)
+  LEDoff(red)
+  LEDoff(blue)
+  return
+
+button_input = GPIO.input(button)
+running = True
+buttonmode = False
+
+while running:
+     text = raw_input('What would you like to do? ')
+
+     print "Running..."
+
+     if text == "1":
+      cycleall()
+      print "OK!"
+     elif text == "2":
+       for i in range(0,2):   
+        cycleall()
+       print "OK!"
+     elif text == "3":
+       for i in range(0,3):   
+        cycleall()
+       print "OK!"
+     elif text == "4":
+      pattern1()
+     elif text == "5":
+      for i in range(0,5):
+          fastblink(green)
+          fastblink(yellow)
+          fastblink(red)
+          fastblink(blue)
+      print "OK!"
+     elif text == "exit":
+       running = False
+       print("going into button mode")
+       buttonmode = True
+       while buttonmode:
+        if (GPIO.input(button)):
+         print("Button Pressed")
+         pattern1()
+         buttonmode = False
+     else:
+      print "? Unknown Command! " + text
+
+print "Cleaning Up..."
+print ""
